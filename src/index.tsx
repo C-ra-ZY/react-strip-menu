@@ -46,6 +46,7 @@ export function ReactStripMenu({
   const menuContainer = useRef<HTMLElement>();
   const [menuStyle, setMenuStyle] = useState<SxStyleProp>({});
   const inMenu = useRef({ in: false });
+  const inTitles = useRef({ in: false });
   const onMouseOver = useCallback(
     (evt: MouseEvent) => {
       const target = evt.target as HTMLElement;
@@ -53,6 +54,7 @@ export function ReactStripMenu({
         menuContainer.current &&
         !isAncestor(target as HTMLElement, menuContainer.current!)
       ) {
+        inTitles.current.in = true;
         for (let index = 0; index < (self.current?.children)!.length; index++) {
           if (
             isAncestor(target, (self.current?.children)![index] as HTMLElement)
@@ -81,11 +83,12 @@ export function ReactStripMenu({
         }
       }
     },
-    [menuContainer]
+    [menuContainer, inTitles]
   );
   const onMouseLeave = useCallback(() => {
+    inTitles.current.in = false;
     setTimeout(() => {
-      if (!inMenu.current.in) {
+      if (!inMenu.current.in && !inTitles.current.in) {
         setMenuStyle((pre: SxStyleProp & { transform: string }) => {
           if (pre) {
             return {
@@ -106,6 +109,7 @@ export function ReactStripMenu({
         });
         setTimeout(() => {
           !inMenu.current.in &&
+            !inTitles.current.in &&
             setMenuStyle((pre: SxStyleProp & { transform: string }) => {
               return pre ? { ...pre, display: "none!important" } : pre;
             });
@@ -115,10 +119,10 @@ export function ReactStripMenu({
   }, [inMenu, duration]);
   const onMouseOverMenu = useCallback(() => {
     inMenu.current.in = true;
-  }, []);
+  }, [inMenu]);
   const onMouseLeaveMenu = useCallback(() => {
     inMenu.current.in = false;
-  }, []);
+  }, [inMenu]);
 
   if (Array.isArray(children) && children.length !== dropdowns.length) {
     throw Error("menu doesn't match dropdowns");
