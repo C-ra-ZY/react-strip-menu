@@ -103,15 +103,22 @@ export function ReactStripMenu({
             return pre;
           }
         });
+        setTimeout(() => {
+          !inMenu.current.in &&
+            setMenuStyle((pre: SxStyleProp & { transform: string }) => {
+              return pre ? { ...pre, display: "none!important" } : pre;
+            });
+        }, duration);
       }
     }, 150);
-  }, [inMenu]);
+  }, [inMenu, duration]);
   const onMouseOverMenu = useCallback(() => {
     inMenu.current.in = true;
   }, []);
   const onMouseLeaveMenu = useCallback(() => {
     inMenu.current.in = false;
   }, []);
+
   if (Array.isArray(children) && children.length !== dropdowns.length) {
     throw Error("menu doesn't match dropdowns");
   }
