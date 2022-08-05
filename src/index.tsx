@@ -1,7 +1,7 @@
 import React, {
   MouseEvent,
   useCallback,
-  useEffect,
+  useLayoutEffect,
   useState,
   useRef,
 } from "react";
@@ -9,6 +9,25 @@ import { Flex } from "rebass";
 import type { FlexProps, SxStyleProp } from "rebass";
 
 export type FadeInMode = "turnover" | "fade";
+
+function isAncestor(child: HTMLElement, suspected: HTMLElement): Boolean {
+  if (child.parentElement === suspected) {
+    return true;
+  } else if (
+    child.parentElement &&
+    child.parentElement !== document.documentElement
+  ) {
+    return isAncestor(child.parentElement, suspected);
+  } else if (
+    child.parentElement &&
+    child.parentElement === document.documentElement &&
+    suspected === document.documentElement
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 export function ReactStripMenu({
   wrapperStyle = {},
@@ -25,15 +44,23 @@ export function ReactStripMenu({
   const [dropdownIndex, setDropdownIndex] = useState<number>(-1);
   const self = useRef<HTMLElement>();
   const [menuStyle, setMenuStyle] = useState<SxStyleProp>({});
-  // const [inMenu, setInMenu] = useState(false);
   const inMenu = useRef({ in: false });
   const onMouseOver = useCallback((evt: MouseEvent) => {
-    const target = evt.target as HTMLDivElement;
-    let left: number | undefined;
-    if ((target as HTMLElement).id !== "menu-container") {
-      left = target.offsetWidth / 2 + target.offsetLeft;
+    const target = evt.target as HTMLElement;
+    if (
+      !isAncestor(
+        target as HTMLElement,
+        document.getElementById("menu-container")!
+      )
+    ) {
       for (let index = 0; index < (self.current?.children)!.length; index++) {
-        if ((self.current?.children)![index] === target) {
+        if (
+          isAncestor(target, (self.current?.children)![index] as HTMLElement)
+        ) {
+          const titleContainer = (self.current?.children)![
+            index
+          ] as HTMLElement;
+          let left = titleContainer.offsetWidth / 2 + titleContainer.offsetLeft;
           setDropdownIndex(index);
           setMenuStyle((pre: SxStyleProp) => {
             return {
@@ -57,10 +84,14 @@ export function ReactStripMenu({
           if (pre) {
             return {
               ...pre,
-              transform: pre!.transform!.replace(
-                "rotateX(0deg)",
-                "rotateX(-90deg)"
-              ),
+              ...(pre!.transform
+                ? {
+                    transform: pre!.transform!.replace(
+                      "rotateX(0deg)",
+                      "rotateX(-90deg)"
+                    ),
+                  }
+                : {}),
               opacity: 0,
             };
           } else {
@@ -131,7 +162,7 @@ function DropdownsWrapper({
   const self = useRef<HTMLElement>();
   const [offset, setOffset] = useState({});
   const [contentStyle, setContentStyle] = useState({});
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (
       self.current &&
       self.current.children[0] &&
@@ -152,6 +183,7 @@ function DropdownsWrapper({
                 );
               }, 0)
           : 0;
+      console.log(translateX);
       setContentStyle({
         transform: `translateX(-${translateX}px)`,
       });
