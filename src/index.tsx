@@ -43,40 +43,45 @@ export function ReactStripMenu({
 } & FlexProps) {
   const [dropdownIndex, setDropdownIndex] = useState<number>(-1);
   const self = useRef<HTMLElement>();
+  const menuContainer = useRef<HTMLElement>();
   const [menuStyle, setMenuStyle] = useState<SxStyleProp>({});
   const inMenu = useRef({ in: false });
-  const onMouseOver = useCallback((evt: MouseEvent) => {
-    const target = evt.target as HTMLElement;
-    if (
-      !isAncestor(
-        target as HTMLElement,
-        document.getElementById("menu-container")!
-      )
-    ) {
-      for (let index = 0; index < (self.current?.children)!.length; index++) {
-        if (
-          isAncestor(target, (self.current?.children)![index] as HTMLElement)
-        ) {
-          const titleContainer = (self.current?.children)![
-            index
-          ] as HTMLElement;
-          let left = titleContainer.offsetWidth / 2 + titleContainer.offsetLeft;
-          setDropdownIndex(index);
-          setMenuStyle((pre: SxStyleProp) => {
-            return {
-              ...pre,
-              transform:
-                `perspective(1500px) ${
-                  fadeInMode === "turnover" ? `rotateX(0deg)` : ""
-                }` +
-                (left !== undefined ? `translateX(calc(${left}px - 50%))` : ""),
-              opacity: 1,
-            };
-          });
+  const onMouseOver = useCallback(
+    (evt: MouseEvent) => {
+      const target = evt.target as HTMLElement;
+      if (
+        menuContainer.current &&
+        !isAncestor(target as HTMLElement, menuContainer.current!)
+      ) {
+        for (let index = 0; index < (self.current?.children)!.length; index++) {
+          if (
+            isAncestor(target, (self.current?.children)![index] as HTMLElement)
+          ) {
+            const titleContainer = (self.current?.children)![
+              index
+            ] as HTMLElement;
+            let left =
+              titleContainer.offsetWidth / 2 + titleContainer.offsetLeft;
+            setDropdownIndex(index);
+            setMenuStyle((pre: SxStyleProp) => {
+              return {
+                ...pre,
+                transform:
+                  `perspective(1500px) ${
+                    fadeInMode === "turnover" ? `rotateX(0deg)` : ""
+                  }` +
+                  (left !== undefined
+                    ? `translateX(calc(${left}px - 50%))`
+                    : ""),
+                opacity: 1,
+              };
+            });
+          }
         }
       }
-    }
-  }, []);
+    },
+    [menuContainer]
+  );
   const onMouseLeave = useCallback(() => {
     setTimeout(() => {
       if (!inMenu.current.in) {
@@ -123,7 +128,7 @@ export function ReactStripMenu({
       <Flex
         onMouseOver={onMouseOverMenu}
         onMouseLeave={onMouseLeaveMenu}
-        id={"menu-container"}
+        ref={menuContainer}
         sx={{
           willChange: "transform",
           transformOrigin: "50% 0%",
@@ -183,7 +188,6 @@ function DropdownsWrapper({
                 );
               }, 0)
           : 0;
-      console.log(translateX);
       setContentStyle({
         transform: `translateX(-${translateX}px)`,
       });
