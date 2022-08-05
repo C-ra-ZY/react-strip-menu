@@ -2,7 +2,7 @@
 
 ## Description
 
-This is typescript react component library, provides minimalist access for developer to realize a strip menu.
+This is a typescript react component library, providing minimalist access for developer to realize a strip menu.
 
 ## [Demo](https://c-ra-zy.github.io/react-strip-menu-demo/)
 
