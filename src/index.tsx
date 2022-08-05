@@ -8,21 +8,21 @@ import React, {
 import { Flex } from "rebass";
 import type { FlexProps, SxStyleProp } from "rebass";
 
-// export type FadeInMode = "turnover" | "fade";
+export type FadeInMode = "turnover" | "fade";
 
 export function ReactStripMenu({
-  // wrapperStyle = {},
+  wrapperStyle = {},
   fadeInMode = "turnover",
   duration = 300,
   dropdowns,
   children,
 }: {
-  fadeInMode?: string;
-  // wrapperStyle: SxStyleProp;
+  fadeInMode?: FadeInMode;
+  wrapperStyle?: SxStyleProp;
   duration?: number;
   dropdowns: Array<React.ReactElement | JSX.Element>;
 } & FlexProps) {
-  const [dropdownIndex, setDropdownIndex] = React.useState<number>(-1);
+  const [dropdownIndex, setDropdownIndex] = useState<number>(-1);
   const self = useRef<HTMLElement>();
   const [menuStyle, setMenuStyle] = useState<SxStyleProp>({});
   // const [inMenu, setInMenu] = useState(false);
@@ -101,15 +101,11 @@ export function ReactStripMenu({
           }`,
           opacity: 0,
           position: "absolute",
-          /* top:
-            typeof marginBetweenTitleAndDropdown === "string"
-              ? marginBetweenTitleAndDropdown
-              : marginBetweenTitleAndDropdown + "px", */
           background: "transparent",
           width: "fit-content",
           height: "fit-content",
           transition: `all ${duration}ms ease-in-out`,
-          // ...wrapperStyle,
+          ...wrapperStyle,
           ...menuStyle,
         }}
       >
