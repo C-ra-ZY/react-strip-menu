@@ -1,11 +1,12 @@
 {
   "name": "react-strip-menu",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "files": [
     "dist"
   ],
+  "repository": "https://github.com/C-ra-ZY/react-strip-menu",
   "types": "dist/esm/index.d.ts",
   "scripts": {
     "rollup": "rollup -c"
