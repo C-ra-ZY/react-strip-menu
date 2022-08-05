@@ -73,6 +73,7 @@ export function ReactStripMenu({
                   (left !== undefined
                     ? `translateX(calc(${left}px - 50%))`
                     : ""),
+                display: "flex",
                 opacity: 1,
               };
             });
