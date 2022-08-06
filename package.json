@@ -1,6 +1,6 @@
 {
   "name": "react-strip-menu",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "files": [
@@ -9,7 +9,7 @@
   "repository": "https://github.com/C-ra-ZY/react-strip-menu",
   "types": "dist/esm/index.d.ts",
   "scripts": {
-    "rollup": "rollup -c"
+    "rollup": "rollup -c -w --watch.exclude dist --watch.exclude node_modules --watch.exclude demo"
   },
   "eslintConfig": {
     "extends": [

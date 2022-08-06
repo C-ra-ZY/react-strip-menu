@@ -10,6 +10,7 @@ import { SystemStyleObject } from "@styled-system/css";
 import type { FlexProps, SxStyleProp } from "rebass";
 
 export type FadeInMode = "turnover" | "fade";
+export type AlignInMode = "left" | "center";
 
 function isAncestor(child: HTMLElement, suspected: HTMLElement): Boolean {
   if (child.parentElement === suspected) {
@@ -32,11 +33,13 @@ function isAncestor(child: HTMLElement, suspected: HTMLElement): Boolean {
 
 export function ReactStripMenu({
   wrapperStyle = {},
+  alignInMode = "center",
   fadeInMode = "turnover",
   duration = 300,
   dropdowns,
   children,
 }: {
+  alignInMode?: AlignInMode;
   fadeInMode?: FadeInMode;
   wrapperStyle?: SxStyleProp;
   duration?: number;
@@ -45,17 +48,25 @@ export function ReactStripMenu({
   const [dropdownIndex, setDropdownIndex] = useState<number>(-1);
   const self = useRef<HTMLElement>();
   const menuContainer = useRef<HTMLElement>();
+  const [classNamesString, setClassNamesString] = useState("");
   const [menuStyle, setMenuStyle] = useState<SxStyleProp>({});
+  const [firstToShowUp, setFirstShowUp] = useState(false);
+
+  const [left, setLeft] = useState(0);
   const inMenu = useRef({ in: false });
   const inTitles = useRef({ in: false });
   const onMouseOver = useCallback(
     (evt: MouseEvent) => {
       const target = evt.target as HTMLElement;
+      if (!inMenu.current.in && !inTitles.current.in) {
+        setFirstShowUp(true);
+      } else {
+        setFirstShowUp(false);
+      }
       if (
         menuContainer.current &&
         !isAncestor(target as HTMLElement, menuContainer.current!)
       ) {
-        inTitles.current.in = true;
         for (let index = 0; index < (self.current?.children)!.length; index++) {
           if (
             isAncestor(target, (self.current?.children)![index] as HTMLElement)
@@ -63,25 +74,36 @@ export function ReactStripMenu({
             const titleContainer = (self.current?.children)![
               index
             ] as HTMLElement;
-            let left =
-              titleContainer.offsetWidth / 2 + titleContainer.offsetLeft;
+            setLeft(
+              alignInMode === "center"
+                ? titleContainer.offsetWidth / 2 + titleContainer.offsetLeft
+                : titleContainer.offsetLeft
+            );
             setDropdownIndex(index);
+            /*  fadeInMode === "turnover" &&
+              menuContainer.current.classList.add("turnover"); */
+            if (!inMenu.current.in && !inTitles.current.in) {
+              setClassNamesString(`${fadeInMode} translateWithoutTransition`);
+            } else {
+              setClassNamesString(`${fadeInMode} translateWithTransition`);
+            }
             setMenuStyle((pre: SxStyleProp & { transform: string }) => {
               return {
                 ...pre,
-                transform:
+                /*       transform:
                   `perspective(1500px) ${
                     fadeInMode === "turnover" ? `rotateX(0deg)` : ""
                   }` +
                   (left !== undefined
                     ? `translateX(calc(${left}px - 50%))`
-                    : ""),
+                    : ""), */
                 visibility: "visible!important" as SystemStyleObject,
                 opacity: 1,
               };
             });
           }
         }
+        inTitles.current.in = true;
       }
     },
     [menuContainer, inTitles]
@@ -123,6 +145,19 @@ export function ReactStripMenu({
       }
     }, 150);
   }, [inMenu, duration]);
+
+  const onTransitionEnd = useCallback(() => {
+    !inMenu.current.in &&
+      !inTitles.current.in &&
+      setMenuStyle((pre: SxStyleProp) => {
+        return pre
+          ? {
+              ...pre,
+              visibility: "hidden!important" as SystemStyleObject,
+            }
+          : pre;
+      });
+  }, []);
   const onMouseOverMenu = useCallback(() => {
     inMenu.current.in = true;
   }, [inMenu]);
@@ -138,14 +173,42 @@ export function ReactStripMenu({
       ref={self}
       flexDirection={"row"}
       justifyContent="space-between"
-      sx={{ position: "relative" }}
       onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
+      onTransitionEnd={onTransitionEnd}
+      sx={{
+        position: "relative",
+        ".turnover": {
+          transform: `perspective(1500px) rotateX(0deg)`,
+          transition: `all ${duration}ms ease-in-out`,
+        },
+        ".fadeIn": {
+          transform: `perspective(1500px)`,
+          transition: `all ${duration}ms ease-in-out`,
+        },
+        ".translateWithTransition": {
+          transform: left
+            ? `translateX(calc(${left}px${
+                alignInMode === "center" ? " - 50%" : ""
+              }))`
+            : "",
+          transition: `all ${duration}ms ease-in-out`,
+        },
+        ".translateWithoutTransition": {
+          transform: left
+            ? `translateX(calc(${left}px${
+                alignInMode === "center" ? " - 50%" : ""
+              }))`
+            : "",
+          transition: "all ${duration}ms ease-in-out, transform 0",
+        },
+      }}
     >
       {children}
       <Flex
         onMouseOver={onMouseOverMenu}
         onMouseLeave={onMouseLeaveMenu}
+        className={classNamesString}
         ref={menuContainer}
         sx={{
           willChange: "transform",
@@ -158,7 +221,7 @@ export function ReactStripMenu({
           background: "transparent",
           width: "fit-content",
           height: "fit-content",
-          transition: `all ${duration}ms ease-in-out`,
+          transition: `opacity ${duration}ms ease-in-out`,
           ...wrapperStyle,
           ...menuStyle,
         }}
@@ -167,6 +230,7 @@ export function ReactStripMenu({
           duration={duration}
           dropdowns={dropdowns}
           dropdownIndex={dropdownIndex}
+          firstToShowUp={firstToShowUp}
         />
       </Flex>
     </Flex>
@@ -177,10 +241,12 @@ function DropdownsWrapper({
   duration = 300,
   dropdowns,
   dropdownIndex,
+  firstToShowUp = false,
 }: {
   duration?: number;
   dropdowns: React.ReactElement[];
   dropdownIndex: number;
+  firstToShowUp?: boolean;
 }) {
   const self = useRef<HTMLElement>();
   const [offset, setOffset] = useState({});
@@ -218,7 +284,9 @@ function DropdownsWrapper({
         ...offset,
         willChange: "transform",
         position: "relative",
-        transition: `all ${duration}ms ease-in-out`,
+        transition: `all ${duration}ms ease-in-out${
+          firstToShowUp ? ", width 0, height 0, transform 0" : ""
+        }`,
         overflowX: "hidden",
         overflowY: "hidden",
       }}
@@ -228,7 +296,9 @@ function DropdownsWrapper({
           position: "absolute",
           zIndex: 1,
           willChange: "transform",
-          transition: `all ${duration}ms ease-in-out`,
+          transition: `all ${duration}ms ease-in-out${
+            firstToShowUp ? ", width 0, height 0, transform 0" : ""
+          }`,
           "& > *": {
             zIndex: -1,
           },
