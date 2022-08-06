@@ -6,6 +6,7 @@ import React, {
   useRef,
 } from "react";
 import { Flex } from "rebass";
+import { SystemStyleObject } from "@styled-system/css";
 import type { FlexProps, SxStyleProp } from "rebass";
 
 export type FadeInMode = "turnover" | "fade";
@@ -65,7 +66,7 @@ export function ReactStripMenu({
             let left =
               titleContainer.offsetWidth / 2 + titleContainer.offsetLeft;
             setDropdownIndex(index);
-            setMenuStyle((pre: SxStyleProp) => {
+            setMenuStyle((pre: SxStyleProp & { transform: string }) => {
               return {
                 ...pre,
                 transform:
@@ -75,7 +76,7 @@ export function ReactStripMenu({
                   (left !== undefined
                     ? `translateX(calc(${left}px - 50%))`
                     : ""),
-                display: "flex",
+                visibility: "visible!important" as SystemStyleObject,
                 opacity: 1,
               };
             });
@@ -110,8 +111,13 @@ export function ReactStripMenu({
         setTimeout(() => {
           !inMenu.current.in &&
             !inTitles.current.in &&
-            setMenuStyle((pre: SxStyleProp & { transform: string }) => {
-              return pre ? { ...pre, display: "none!important" } : pre;
+            setMenuStyle((pre: SxStyleProp) => {
+              return pre
+                ? {
+                    ...pre,
+                    visibility: "hidden!important" as SystemStyleObject,
+                  }
+                : pre;
             });
         }, duration);
       }
