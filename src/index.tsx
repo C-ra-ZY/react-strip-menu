@@ -80,24 +80,19 @@ export function ReactStripMenu({
                 : titleContainer.offsetLeft
             );
             setDropdownIndex(index);
-            /*  fadeInMode === "turnover" &&
-              menuContainer.current.classList.add("turnover"); */
-            if (!inMenu.current.in && !inTitles.current.in) {
+            if (
+              !inMenu.current.in &&
+              !inTitles.current.in &&
+              menuContainer.current.style.visibility === "hidden"
+            ) {
               setClassNamesString(`${fadeInMode} translateWithoutTransition`);
             } else {
               setClassNamesString(`${fadeInMode} translateWithTransition`);
             }
             setMenuStyle((pre: SxStyleProp & { transform: string }) => {
+              menuContainer.current!.style.visibility = "visible";
               return {
                 ...pre,
-                /*       transform:
-                  `perspective(1500px) ${
-                    fadeInMode === "turnover" ? `rotateX(0deg)` : ""
-                  }` +
-                  (left !== undefined
-                    ? `translateX(calc(${left}px - 50%))`
-                    : ""), */
-                visibility: "visible!important" as SystemStyleObject,
                 opacity: 1,
               };
             });
@@ -130,33 +125,14 @@ export function ReactStripMenu({
             return pre;
           }
         });
-        setTimeout(() => {
-          !inMenu.current.in &&
-            !inTitles.current.in &&
-            setMenuStyle((pre: SxStyleProp) => {
-              return pre
-                ? {
-                    ...pre,
-                    visibility: "hidden!important" as SystemStyleObject,
-                  }
-                : pre;
-            });
-        }, duration);
       }
-    }, 150);
+    }, duration);
   }, [inMenu, duration]);
 
   const onTransitionEnd = useCallback(() => {
     !inMenu.current.in &&
       !inTitles.current.in &&
-      setMenuStyle((pre: SxStyleProp) => {
-        return pre
-          ? {
-              ...pre,
-              visibility: "hidden!important" as SystemStyleObject,
-            }
-          : pre;
-      });
+      (menuContainer.current!.style.visibility = "hidden");
   }, []);
   const onMouseOverMenu = useCallback(() => {
     inMenu.current.in = true;
