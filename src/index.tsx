@@ -50,7 +50,7 @@ export function ReactStripMenu({
   const menuContainer = useRef<HTMLElement>();
   const [classNamesString, setClassNamesString] = useState("");
   const [menuStyle, setMenuStyle] = useState<SxStyleProp>({});
-  const [firstToShowUp, setFirstShowUp] = useState(false);
+  const [firstShowUp, setFirstShowUp] = useState(false);
 
   const [left, setLeft] = useState(0);
   const inMenu = useRef({ in: false });
@@ -58,7 +58,11 @@ export function ReactStripMenu({
   const onMouseOver = useCallback(
     (evt: MouseEvent) => {
       const target = evt.target as HTMLElement;
-      if (!inMenu.current.in && !inTitles.current.in) {
+      if (
+        !inMenu.current.in &&
+        !inTitles.current.in &&
+        menuContainer.current!.style.visibility === "hidden"
+      ) {
         setFirstShowUp(true);
       } else {
         setFirstShowUp(false);
@@ -132,8 +136,9 @@ export function ReactStripMenu({
   const onTransitionEnd = useCallback(() => {
     !inMenu.current.in &&
       !inTitles.current.in &&
+      (menuStyle as any).opacity == "0" &&
       (menuContainer.current!.style.visibility = "hidden");
-  }, []);
+  }, [menuStyle]);
   const onMouseOverMenu = useCallback(() => {
     inMenu.current.in = true;
   }, [inMenu]);
@@ -206,7 +211,7 @@ export function ReactStripMenu({
           duration={duration}
           dropdowns={dropdowns}
           dropdownIndex={dropdownIndex}
-          firstToShowUp={firstToShowUp}
+          firstShowUp={firstShowUp}
         />
       </Flex>
     </Flex>
@@ -217,12 +222,12 @@ function DropdownsWrapper({
   duration = 300,
   dropdowns,
   dropdownIndex,
-  firstToShowUp = false,
+  firstShowUp = false,
 }: {
   duration?: number;
   dropdowns: React.ReactElement[];
   dropdownIndex: number;
-  firstToShowUp?: boolean;
+  firstShowUp?: boolean;
 }) {
   const self = useRef<HTMLElement>();
   const [offset, setOffset] = useState({});
@@ -261,7 +266,7 @@ function DropdownsWrapper({
         willChange: "transform",
         position: "relative",
         transition: `all ${duration}ms ease-in-out${
-          firstToShowUp ? ", width 0, height 0, transform 0" : ""
+          firstShowUp ? ", width 0, height 0, transform 0" : ""
         }`,
         overflowX: "hidden",
         overflowY: "hidden",
@@ -273,7 +278,7 @@ function DropdownsWrapper({
           zIndex: 1,
           willChange: "transform",
           transition: `all ${duration}ms ease-in-out${
-            firstToShowUp ? ", width 0, height 0, transform 0" : ""
+            firstShowUp ? ", width 0, height 0, transform 0" : ""
           }`,
           "& > *": {
             zIndex: -1,
