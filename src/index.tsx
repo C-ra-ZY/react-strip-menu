@@ -111,6 +111,7 @@ export function ReactStripMenu({
     inTitles.current.in = false;
     setTimeout(() => {
       if (!inMenu.current.in && !inTitles.current.in) {
+        setDropdownIndex(-1);
         setMenuStyle((pre: SxStyleProp & { transform: string }) => {
           if (pre) {
             return {
