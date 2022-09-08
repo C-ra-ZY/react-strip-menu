@@ -6,29 +6,13 @@ import React, {
   useRef,
 } from "react";
 import { Flex } from "rebass";
-import { SystemStyleObject } from "@styled-system/css";
 import type { FlexProps, SxStyleProp } from "rebass";
 
 export type FadeInMode = "turnover" | "fade";
 export type AlignInMode = "left" | "center";
 
 function isAncestor(child: HTMLElement, suspected: HTMLElement): Boolean {
-  if (child.parentElement === suspected) {
-    return true;
-  } else if (
-    child.parentElement &&
-    child.parentElement !== document.documentElement
-  ) {
-    return isAncestor(child.parentElement, suspected);
-  } else if (
-    child.parentElement &&
-    child.parentElement === document.documentElement &&
-    suspected === document.documentElement
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+  return suspected.contains(child);
 }
 
 export function ReactStripMenu({
