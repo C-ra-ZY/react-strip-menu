@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Box, Flex } from "rebass";
+import "./index.css";
 
 import { ReactStripMenu } from "react-strip-menu";
 
@@ -9,8 +9,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <Flex
-      sx={{
+    <div
+      style={{
         height: "72px",
         width: "100%",
         display: "flex",
@@ -22,12 +22,11 @@ root.render(
         justifyContent: "center",
         paddingRight: "5%",
         background: "gray",
-        backdropFilter: "unset",
       }}
     >
       <ReactStripMenu
-        fadeInMode="fade"
-        wrapperStyle={{
+        animation="fade"
+        popoverStyle={{
           transformOrigin: "0 0",
           background: "rgba(10, 10, 10, 1)",
           mixBlendMode: "normal",
@@ -38,31 +37,34 @@ root.render(
           overflow: "hidden",
           boxShadow: "0 50px 100px rgba(50, 50, 93, 0.1)",
         }}
+        onOpen={(index) => console.log("opened:", index)}
+        onClose={() => console.log("closed")}
         dropdowns={[
-          <Box
-            sx={{ width: "100px", height: "100px", color: "red" }}
-            onClick={() => {
-              console.log("a");
-            }}
+          <div
+            key="d1"
+            style={{ width: "100px", height: "100px", color: "red", padding: "8px" }}
+            onClick={() => console.log("clicked A dropdown")}
           >
             D
-          </Box>,
-          <Box sx={{ width: "200px", height: "200px", color: "red" }}>DDD</Box>,
-          <Box sx={{ width: "300px", height: "300px", color: "red" }}>
+          </div>,
+          <div
+            key="d2"
+            style={{ width: "200px", height: "200px", color: "red", padding: "8px" }}
+          >
+            DDD
+          </div>,
+          <div
+            key="d3"
+            style={{ width: "300px", height: "300px", color: "red", padding: "8px" }}
+          >
             DDDDD
-          </Box>,
+          </div>,
         ]}
       >
-        <Box textAlign={"center"} width="100px">
-          <Box>A</Box>
-        </Box>
-        <Box textAlign={"center"} width="100px">
-          <Box>B</Box>
-        </Box>
-        <Box textAlign={"center"} width="100px">
-          <Box>C</Box>
-        </Box>
+        <div style={{ textAlign: "center", width: "100px", color:"pink" }}>A</div>
+        <div style={{ textAlign: "center", width: "100px", color:"pink" }}>B</div>
+        <div style={{ textAlign: "center", width: "100px", color:"pink" }}>C</div>
       </ReactStripMenu>
-    </Flex>
+    </div>
   </React.StrictMode>
 );

@@ -1,16 +1,13 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 **/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
 
 # build
+**/dist
 **/build
-dist
+
+# lock files (bun.lock is text-based, tracked by git)
+package-lock.json
+yarn.lock
 
 # misc
 .DS_Store
@@ -19,6 +16,11 @@ dist
 .env.test.local
 .env.production.local
 
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# coverage
+coverage
+cypress
