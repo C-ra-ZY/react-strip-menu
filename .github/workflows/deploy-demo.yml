@@ -5,11 +5,18 @@ on:
     branches:
       - main
     paths:
-      - "packages/demo/**"
+      - "packages/demo/src/**"
+      - "packages/demo/public/**"
+      - "packages/demo/index.html"
+      - "packages/demo/package.json"
+      - "packages/demo/vite.config.ts"
+      - "packages/demo/tsconfig.json"
       - "packages/react-strip-menu/src/**"
       - "packages/react-strip-menu/package.json"
-      - "package.json"
-      - "bun.lock"
+      - "packages/react-strip-menu/tsup.config.ts"
+      - "packages/react-strip-menu/tsconfig.json"
+      - "!packages/react-strip-menu/src/__tests__/**"
+      - "!packages/react-strip-menu/README.md"
   workflow_dispatch:
 
 permissions:
