@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  base: mode === "production" ? "/react-strip-menu-demo/" : "/",
+  base: mode === "production" ? "/react-strip-menu/" : "/",
   server: {
     port: 3456,
     open: true,
