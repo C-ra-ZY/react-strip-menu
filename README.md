@@ -6,7 +6,7 @@ This repository is a Bun workspaces monorepo containing both the published packa
 
 ## Demo
 
-- Live demo: `https://c-ra-zy.github.io/react-strip-menu/`
+- [Live demo](https://c-ra-zy.github.io/react-strip-menu)
 
 ## Install
 
