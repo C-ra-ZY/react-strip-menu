@@ -1,10 +1,12 @@
 # React Strip Menu
 
-## Description
+TypeScript React component library that provides an animated strip/dropdown menu with a minimal API.
 
-This is a typescript react component library, providing minimalist access for developer to realize a strip menu.
+This repository is a Bun workspaces monorepo containing both the published package and the demo app.
 
-## [Demo](https://c-ra-zy.github.io/react-strip-menu-demo/)
+## Demo
+
+- [Live demo](https://c-ra-zy.github.io/react-strip-menu)
 
 ## Install
 
@@ -13,83 +15,43 @@ npm install react-strip-menu
 ```
 
 ```bash
-yarn add react-strip-men
+yarn add react-strip-menu
 ```
-
-## Demo Code
-
-create a create-react-app project
 
 ```bash
-npx create-react-app its-a-demo --template typescript
+bun add react-strip-menu
 ```
 
-and paste below content to src/index.tsx
-```typescript
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { Box, Flex } from "rebass";
+## Usage
 
+```tsx
 import { ReactStripMenu } from "react-strip-menu";
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <Flex
-      sx={{
-        height: "72px",
-        width: "100%",
-        display: "flex",
-        top: 0,
-        zIndex: 999,
-        position: "fixed",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingRight: "5%",
-        background: "gray",
-        backdropFilter: "unset",
+export function Example() {
+  return (
+    <ReactStripMenu
+      animation="fade"
+      align="center"
+      duration={300}
+      popoverStyle={{
+        top: "50px",
+        background: "rgba(10, 10, 10, 1)",
+        color: "#fff",
+        borderRadius: "12px",
+        overflow: "hidden",
       }}
+      dropdowns={[
+        <div key="d1" style={{ width: "120px", height: "80px", padding: "8px" }}>A panel</div>,
+        <div key="d2" style={{ width: "180px", height: "120px", padding: "8px" }}>B panel</div>,
+        <div key="d3" style={{ width: "240px", height: "160px", padding: "8px" }}>C panel</div>,
+      ]}
+      onOpen={(index) => console.log("opened", index)}
+      onClose={() => console.log("closed")}
     >
-      <ReactStripMenu
-        fadeInMode="fade"
-        wrapperStyle={{
-          transformOrigin: "0 0",
-          background: "rgba(10, 10, 10, 1)",
-          mixBlendMode: "normal",
-          top: "50px",
-          color: "#ffffff",
-          border: "solid rgba(255, 255, 255, 0.2) 0.5px",
-          borderRadius: "12px",
-          overflow: "hidden",
-          boxShadow: "0 50px 100px rgba(50, 50, 93, 0.1)",
-        }}
-        dropdowns={[
-          <Box sx={{ width: "100px", height: "100px", color: "red" }}>D</Box>,
-          <Box sx={{ width: "200px", height: "200px", color: "red" }}>DDD</Box>,
-          <Box sx={{ width: "300px", height: "300px", color: "red" }}>
-            DDDDD
-          </Box>,
-        ]}
-      >
-        <Box textAlign={"center"} width="100px">
-          A
-        </Box>
-        <Box textAlign={"center"} width="100px">
-          B
-        </Box>
-        <Box textAlign={"center"} width="100px">
-          C
-        </Box>
-      </ReactStripMenu>
-    </Flex>
-  </React.StrictMode>
-);
-```
-
-run command to view demo
-```bash
-npm start
+      <div style={{ width: "100px", textAlign: "center" }}>A</div>
+      <div style={{ width: "100px", textAlign: "center" }}>B</div>
+      <div style={{ width: "100px", textAlign: "center" }}>C</div>
+    </ReactStripMenu>
+  );
+}
 ```
