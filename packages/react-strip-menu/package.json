@@ -22,7 +22,10 @@
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/C-ra-ZY/react-strip-menu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/C-ra-ZY/react-strip-menu.git"
+  },
   "scripts": {
     "build": "tsup",
     "lint": "tsc --noEmit",
